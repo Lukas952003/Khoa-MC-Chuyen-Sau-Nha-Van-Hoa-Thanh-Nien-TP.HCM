@@ -1,0 +1,1006 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>THE UNKNOWN — MC CHUYÊN SÂU K27</title>
+    <style>
+      :root {
+        --ink: #070707;
+        --ivory: #f4f0e6;
+        --muted: #98958d;
+        --gold: #d8b36a;
+        --line: rgba(244, 240, 230, 0.16);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: #050505;
+        color: var(--ivory);
+        font-family: Arial, "Helvetica Neue", sans-serif;
+      }
+      button {
+        font: inherit;
+        color: inherit;
+      }
+      .app {
+        width: 100vw;
+        height: 100vh;
+        position: relative;
+        overflow: hidden;
+        background: #050505;
+      }
+      .app:before {
+        content: "";
+        position: absolute;
+        inset: -20%;
+        background:
+          radial-gradient(circle at 50% 52%, rgba(216, 179, 106, 0.11), transparent 19%),
+          radial-gradient(circle at 15% 15%, rgba(255, 255, 255, 0.045), transparent 24%),
+          radial-gradient(circle at 85% 80%, rgba(255, 255, 255, 0.03), transparent 26%);
+        filter: blur(2px);
+      }
+      .noise {
+        position: absolute;
+        inset: 0;
+        opacity: 0.045;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+      }
+      .stage {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .topbar {
+        position: absolute;
+        z-index: 5;
+        left: 4.5vw;
+        right: 4.5vw;
+        top: 4vh;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .wordmark {
+        font-size: 11px;
+        letter-spacing: 0.48em;
+        color: #cfc8bb;
+      }
+      .edition {
+        text-align: right;
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        color: #6d6a64;
+        line-height: 1.7;
+      }
+      .hero {
+        text-align: center;
+        position: absolute;
+        top: 8.5vh;
+        z-index: 2;
+        pointer-events: none;
+      }
+      .hero .kicker {
+        font-size: 9px;
+        letter-spacing: 0.48em;
+        color: var(--gold);
+        margin-bottom: 15px;
+      }
+      .hero h1 {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(44px, 6vw, 92px);
+        font-weight: 400;
+        letter-spacing: 0.035em;
+        margin: 0;
+        line-height: 0.92;
+      }
+      .hero p {
+        font-size: 10px;
+        letter-spacing: 0.34em;
+        color: #6d6a64;
+        margin: 17px 0 0;
+      }
+      .orbit {
+        position: absolute;
+        width: min(70vw, 930px);
+        height: min(70vw, 930px);
+        min-height: 560px;
+        min-width: 560px;
+        border-radius: 50%;
+        border: 1px solid rgba(244, 240, 230, 0.075);
+        box-shadow: 0 0 100px rgba(216, 179, 106, 0.045) inset;
+      }
+      .orbit:before,
+      .orbit:after {
+        content: "";
+        position: absolute;
+        border-radius: 50%;
+        inset: 7%;
+        border: 1px dashed rgba(244, 240, 230, 0.055);
+      }
+      .orbit:after {
+        inset: 18%;
+        border-style: solid;
+        border-color: rgba(216, 179, 106, 0.05);
+      }
+      .core {
+        position: absolute;
+        width: 230px;
+        height: 230px;
+        border-radius: 50%;
+        border: 1px solid rgba(216, 179, 106, 0.34);
+        display: grid;
+        place-items: center;
+        background: radial-gradient(circle, rgba(216, 179, 106, 0.09), rgba(5, 5, 5, 0.65) 62%);
+        box-shadow:
+          0 0 90px rgba(216, 179, 106, 0.08),
+          inset 0 0 60px rgba(216, 179, 106, 0.05);
+      }
+      .core:before {
+        content: "";
+        position: absolute;
+        inset: 16px;
+        border-radius: 50%;
+        border: 1px solid rgba(244, 240, 230, 0.09);
+      }
+      .core .inner {
+        z-index: 1;
+        text-align: center;
+      }
+      .core .tiny {
+        font-size: 8px;
+        letter-spacing: 0.4em;
+        color: #77736b;
+      }
+      .core .big {
+        font-family: Georgia, serif;
+        font-size: 29px;
+        margin-top: 8px;
+      }
+      .core .hint {
+        font-size: 8px;
+        letter-spacing: 0.22em;
+        color: #625f59;
+        margin-top: 9px;
+        text-transform: uppercase;
+      }
+      .mystery {
+        position: absolute;
+        z-index: 4;
+        width: 104px;
+        height: 104px;
+        border: 0;
+        background: none;
+        cursor: pointer;
+        transition:
+          transform 0.6s cubic-bezier(0.16, 1, 0.3, 1),
+          opacity 0.5s,
+          filter 0.5s;
+      }
+      .mystery:hover {
+        transform: scale(1.13);
+      }
+      .mystery .halo {
+        position: absolute;
+        inset: -32px;
+        border-radius: 50%;
+        background: radial-gradient(circle, rgba(216, 179, 106, 0.2), transparent 65%);
+        opacity: 0;
+        transition: 0.4s;
+      }
+      .mystery:hover .halo {
+        opacity: 1;
+      }
+      .glyph {
+        position: absolute;
+        inset: 16px;
+        border: 1px solid rgba(244, 240, 230, 0.58);
+        transform: rotate(45deg);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.008));
+        box-shadow: 0 20px 45px rgba(0, 0, 0, 0.45);
+        transition: 0.45s;
+      }
+      .mystery:hover .glyph {
+        border-color: var(--gold);
+        box-shadow: 0 0 38px rgba(216, 179, 106, 0.22);
+      }
+      .g2 {
+        border-radius: 50%;
+        transform: none;
+      }
+      .g3 {
+        border-radius: 8px;
+        transform: rotate(12deg);
+      }
+      .g4 {
+        clip-path: polygon(50% 0, 100% 38%, 78% 100%, 22% 100%, 0 38%);
+        border-radius: 20px;
+      }
+      .g5 {
+        border-radius: 50%;
+        transform: scale(0.78);
+        border-width: 2px;
+      }
+      .g6 {
+        transform: rotate(0);
+        border-radius: 5px 28px 5px 28px;
+      }
+      .g7 {
+        border-radius: 50% 50% 8px 8px;
+        transform: scale(0.75, 1);
+      }
+      .g8 {
+        transform: rotate(-17deg) skew(-5deg);
+      }
+      .g9 {
+        border-radius: 50%;
+        transform: scale(0.7);
+        box-shadow: inset 0 0 20px rgba(216, 179, 106, 0.15);
+      }
+      .g10 {
+        clip-path: polygon(50% 0, 100% 50%, 50% 100%, 0 50%);
+      }
+      .g11 {
+        border-radius: 4px;
+        transform: scale(0.72) rotate(45deg);
+        border-style: dashed;
+      }
+      .mystery .spark {
+        position: absolute;
+        width: 4px;
+        height: 4px;
+        border-radius: 50%;
+        background: var(--gold);
+        top: 8px;
+        right: 8px;
+        box-shadow: 0 0 12px var(--gold);
+        opacity: 0.65;
+      }
+      .mystery .tag {
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: 107px;
+        font-size: 7px;
+        letter-spacing: 0.34em;
+        color: #5f5b54;
+        white-space: nowrap;
+      }
+      .m1 {
+        left: 15%;
+        top: 32%;
+      }
+      .m2 {
+        left: 27%;
+        top: 20%;
+      }
+      .m3 {
+        left: 43%;
+        top: 13%;
+      }
+      .m4 {
+        left: 61%;
+        top: 20%;
+      }
+      .m5 {
+        left: 75%;
+        top: 33%;
+      }
+      .m6 {
+        left: 78%;
+        top: 53%;
+      }
+      .m7 {
+        left: 65%;
+        top: 69%;
+      }
+      .m8 {
+        left: 48%;
+        top: 78%;
+      }
+      .m9 {
+        left: 30%;
+        top: 72%;
+      }
+      .m10 {
+        left: 15%;
+        top: 59%;
+      }
+      .m11 {
+        left: 7%;
+        top: 44%;
+      }
+      .bottom {
+        position: absolute;
+        z-index: 5;
+        left: 4.5vw;
+        right: 4.5vw;
+        bottom: 4vh;
+        display: flex;
+        justify-content: space-between;
+        align-items: end;
+      }
+      .bottom .line {
+        font-size: 8px;
+        letter-spacing: 0.24em;
+        color: #5d5a54;
+      }
+      .bottom .instruction {
+        color: #aaa398;
+      }
+      .bottom .instruction b {
+        color: var(--ivory);
+        font-weight: 500;
+      }
+      #selection.fade .mystery:not(.chosen) {
+        opacity: 0;
+        filter: blur(8px);
+        transform: scale(0.65);
+      }
+      #selection.fade .mystery.chosen {
+        z-index: 20;
+        transform: scale(1.75);
+        filter: drop-shadow(0 0 30px rgba(216, 179, 106, 0.25));
+      }
+      .reveal,
+      .exam {
+        position: absolute;
+        inset: 0;
+        z-index: 50;
+        background: #050505;
+        display: none;
+      }
+      .reveal.show,
+      .exam.show {
+        display: grid;
+      }
+      .reveal {
+        place-items: center;
+        background:
+          radial-gradient(circle at 50% 48%, rgba(216, 179, 106, 0.12), transparent 25%), #050505;
+      }
+      .reveal .mark {
+        position: absolute;
+        width: 280px;
+        height: 280px;
+        border: 1px solid rgba(216, 179, 106, 0.3);
+        border-radius: 50%;
+        animation: pulse 2.2s infinite;
+      }
+      .reveal .mark:before {
+        content: "";
+        position: absolute;
+        inset: 28px;
+        border: 1px dashed rgba(244, 240, 230, 0.12);
+        border-radius: 50%;
+      }
+      @keyframes pulse {
+        50% {
+          transform: scale(1.08);
+          opacity: 0.45;
+        }
+      }
+      .quoteBox {
+        position: relative;
+        z-index: 2;
+        text-align: center;
+        max-width: 80vw;
+      }
+      .quoteBox .label {
+        font-size: 9px;
+        letter-spacing: 0.48em;
+        color: var(--gold);
+        margin-bottom: 24px;
+      }
+      .quote {
+        font-family: Georgia, "Times New Roman", serif;
+        font-size: clamp(34px, 5vw, 76px);
+        line-height: 1.08;
+        font-style: italic;
+        font-weight: 400;
+      }
+      .quote span {
+        opacity: 0;
+        display: inline-block;
+        transform: translateY(16px);
+        animation: word 0.45s forwards;
+        margin-right: 0.22em;
+      }
+      @keyframes word {
+        to {
+          opacity: 1;
+          transform: none;
+        }
+      }
+      .openPrompt {
+        margin-top: 40px;
+        padding: 14px 25px;
+        border: 1px solid rgba(216, 179, 106, 0.55);
+        background: transparent;
+        cursor: pointer;
+        font-size: 9px;
+        letter-spacing: 0.28em;
+        text-transform: uppercase;
+        opacity: 0;
+        animation: appear 0.7s 1.9s forwards;
+      }
+      .openPrompt:hover {
+        background: rgba(216, 179, 106, 0.1);
+      }
+      @keyframes appear {
+        to {
+          opacity: 1;
+        }
+      }
+      .exam {
+        place-items: center;
+        background:
+          radial-gradient(circle at 78% 15%, rgba(216, 179, 106, 0.08), transparent 25%), #f1eee6;
+        color: #0b0b0a;
+      }
+      .examTop {
+        position: absolute;
+        left: 5vw;
+        right: 5vw;
+        top: 4vh;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+      }
+      .examBrand {
+        font-size: 9px;
+        letter-spacing: 0.38em;
+        color: #77736b;
+      }
+      .timer {
+        font-family: Georgia, serif;
+        font-size: 34px;
+        line-height: 1;
+        color: #171613;
+      }
+      .timer.warn {
+        animation: blink 0.8s infinite;
+      }
+      @keyframes blink {
+        50% {
+          opacity: 0.35;
+        }
+      }
+      .examMain {
+        width: 88vw;
+        height: 78vh;
+        display: grid;
+        grid-template-columns: 24% 1fr;
+        gap: 5vw;
+        align-items: center;
+      }
+      .examSide {
+        border-left: 1px solid #c9c3b7;
+        padding-left: 2vw;
+      }
+      .examNo {
+        font-size: 11px;
+        letter-spacing: 0.35em;
+        color: #9c8a67;
+      }
+      .examTitle {
+        font-family: Georgia, serif;
+        font-size: clamp(42px, 5vw, 76px);
+        line-height: 0.92;
+        margin: 18px 0 25px;
+      }
+      .examKind {
+        font-size: 9px;
+        letter-spacing: 0.24em;
+        color: #77736b;
+      }
+      .examContent {
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        border-top: 1px solid #c9c3b7;
+        border-bottom: 1px solid #c9c3b7;
+        padding: 3vh 0;
+      }
+      .prompt {
+        font-size: clamp(18px, 1.65vw, 29px);
+        line-height: 1.48;
+        white-space: pre-line;
+        overflow: hidden;
+        max-height: 65vh;
+      }
+      .requirement {
+        margin-top: 2.4vh;
+        padding-top: 1.6vh;
+        border-top: 1px solid #d3cec3;
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        color: #666158;
+      }
+      .back {
+        position: absolute;
+        left: 5vw;
+        bottom: 4vh;
+        border: 0;
+        background: none;
+        color: #77736b;
+        font-size: 9px;
+        letter-spacing: 0.25em;
+        cursor: pointer;
+      }
+      .back:hover {
+        color: #111;
+      }
+      .stageNo {
+        position: absolute;
+        right: 5vw;
+        bottom: 4vh;
+        font-size: 8px;
+        letter-spacing: 0.3em;
+        color: #77736b;
+      }
+      @media (max-width: 1100px) {
+        .orbit {
+          width: 650px;
+          height: 650px;
+        }
+        .mystery {
+          width: 84px;
+          height: 84px;
+        }
+        .mystery .tag {
+          top: 88px;
+        }
+        .core {
+          width: 180px;
+          height: 180px;
+        }
+        .examMain {
+          width: 90vw;
+          gap: 3vw;
+        }
+        .prompt {
+          font-size: 18px;
+        }
+        .examTitle {
+          font-size: 46px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="app">
+      <div class="noise"></div>
+      <section id="selection" class="stage">
+        <div class="topbar">
+          <div class="wordmark">MC CHUYÊN SÂU K27</div>
+          <div class="edition">
+            NHÀ VĂN HÓA THANH NIÊN TP.HCM<br /><span>THE UNKNOWN / 11 STORIES</span>
+          </div>
+        </div>
+        <div class="hero">
+          <div class="kicker">A CHOICE WITHOUT A NAME</div>
+          <h1>THE UNKNOWN</h1>
+          <p>11 vật thể · 11 câu chuyện · 1 lựa chọn</p>
+        </div>
+        <div class="orbit"></div>
+        <div class="core">
+          <div class="inner">
+            <div class="tiny">YOUR STORY</div>
+            <div class="big">CHOOSE</div>
+            <div class="hint">Một vật thể đang chờ bạn</div>
+          </div>
+        </div>
+        <button class="mystery m1">
+          <i class="halo"></i><i class="glyph g1"></i><i class="spark"></i
+          ><span class="tag">01</span></button
+        ><button class="mystery m2">
+          <i class="halo"></i><i class="glyph g2"></i><span class="tag">02</span></button
+        ><button class="mystery m3">
+          <i class="halo"></i><i class="glyph g3"></i><span class="tag">03</span></button
+        ><button class="mystery m4">
+          <i class="halo"></i><i class="glyph g4"></i><span class="tag">04</span></button
+        ><button class="mystery m5">
+          <i class="halo"></i><i class="glyph g5"></i><i class="spark"></i
+          ><span class="tag">05</span></button
+        ><button class="mystery m6">
+          <i class="halo"></i><i class="glyph g6"></i><span class="tag">06</span></button
+        ><button class="mystery m7">
+          <i class="halo"></i><i class="glyph g7"></i><span class="tag">07</span></button
+        ><button class="mystery m8">
+          <i class="halo"></i><i class="glyph g8"></i><span class="tag">08</span></button
+        ><button class="mystery m9">
+          <i class="halo"></i><i class="glyph g9"></i><i class="spark"></i
+          ><span class="tag">09</span></button
+        ><button class="mystery m10">
+          <i class="halo"></i><i class="glyph g10"></i><span class="tag">10</span></button
+        ><button class="mystery m11">
+          <i class="halo"></i><i class="glyph g11"></i><span class="tag">11</span>
+        </button>
+        <div class="bottom">
+          <div class="line">SELECT / REVEAL / SPEAK</div>
+          <div class="line instruction">Chạm vào <b>một vật thể</b> để bắt đầu</div>
+          <div class="line">02:00</div>
+        </div>
+      </section>
+      <section id="reveal" class="reveal">
+        <div class="mark"></div>
+        <div class="quoteBox">
+          <div class="label">THE STORY BEHIND YOUR CHOICE</div>
+          <div id="quote" class="quote"></div>
+          <button id="openPrompt" class="openPrompt">MỞ ĐỀ THI →</button>
+        </div>
+      </section>
+      <section id="exam" class="exam">
+        <div class="examTop">
+          <div class="examBrand">MC CHUYÊN SÂU K27 / EXAMINATION</div>
+          <div id="timer" class="timer">02:00</div>
+        </div>
+        <div class="examMain">
+          <aside class="examSide">
+            <div id="examNo" class="examNo"></div>
+            <h2 id="examTitle" class="examTitle"></h2>
+            <div id="examKind" class="examKind"></div>
+          </aside>
+          <article class="examContent">
+            <div id="prompt" class="prompt"></div>
+            <div class="requirement">
+              <b>YÊU CẦU:</b> Đọc diễn cảm và trình bày suy nghĩ / quan điểm cá nhân. Thời lượng tối
+              đa: 02 phút.
+            </div>
+          </article>
+        </div>
+        <button id="back" class="back">← QUAY LẠI LỰA CHỌN</button>
+        <div class="stageNo">ONE VOICE / ONE TAKE</div>
+      </section>
+    </main>
+    <script>
+      const DATA = [
+        {
+          no: "ĐỀ 01",
+          title: "THA THỨ",
+          kind: 1,
+          quote: "Không phải họ. Là ta.",
+          cat: "THƠ • SUY NGẪM",
+          text: `Có những vết đau không cần người xin lỗi,
+mới chịu lành trong một buổi chiều yên.
+Ta tha thứ chẳng vì quên tất cả,
+chỉ vì lòng không muốn giữ ưu phiền.
+Người làm đau ta có khi đi rất nhẹ,
+còn chính ta mang nặng suốt đường dài.
+Đến một ngày bàn tay thôi nắm chặt,
+mới hay mình vừa trả tự do cho ai.
+Không phải họ.
+Là ta.
+Tha thứ chẳng làm quá khứ thành đúng,
+cũng không buộc ta trở lại như xưa.
+Chỉ là giữa một đời nhiều giông gió,
+ta chọn lòng mình
+đừng hóa thành cơn mưa.`,
+        },
+        {
+          no: "ĐỀ 02",
+          title: "HOÀI BÃO",
+          kind: 2,
+          quote: "Hoài bão không phải điều ta nói thật lớn...",
+          cat: "THƠ • SUY NGẪM",
+          text: `Đừng hỏi tuổi hai mươi đường bao xa phía trước,
+khi bàn chân còn biết bước thì cứ bước mà đi.
+Có những giấc mơ chưa một lần thành hình dáng,
+đã âm thầm giữ một đời người khỏi sống vô tri.
+Đường lớn không sinh ra từ những ngày thuận gió,
+ước vọng chẳng trưởng thành trong tiếng vỗ tay thôi.
+Có lúc phải một mình đi qua miền nghi hoặc,
+tự nhóm lửa trong tim khi ánh sáng xa rồi.
+Hoài bão không phải điều ta nói thật lớn,
+mà là điều còn lại lúc chẳng một ai nhìn.
+Sau mọi huy hoàng, nếu có ngày chạm tới,
+xin nhớ con đường dài
+đã bắt đầu từ một bước chân tin.`,
+        },
+        {
+          no: "ĐỀ 03",
+          title: "TỔ QUỐC",
+          kind: 3,
+          quote: "Tổ quốc lớn lao bắt đầu từ những điều rất nhỏ.",
+          cat: "THƠ • ĐẤT NƯỚC",
+          text: `Tổ quốc đâu chỉ trên đường biên cột mốc,
+hay lá cờ bay đỏ một khoảng trời.
+Tổ quốc có trong bàn tay mẹ gầy vun đất,
+trong tiếng cha gọi con giữa một chiều quê.
+Có người giữ bình yên bằng đời mình phía trước,
+có người xây ngày mai từ lớp học, công trường.
+Có những điều bình thường ta đi qua chẳng nhớ,
+đến một ngày xa mới biết đó quê hương.
+Tôi yêu đất nước không vì lời phải nói,
+mà bởi đời tôi đã mọc rễ nơi này.
+Một tiếng Việt đau cũng thành lời để khóc,
+một tiếng Việt vui
+đủ gọi triệu bàn tay.
+Tổ quốc lớn lao
+bắt đầu từ những điều rất nhỏ:
+biết sống sao
+để xứng đáng với nơi mình thuộc về.`,
+        },
+        {
+          no: "ĐỀ 04",
+          title: "TÌNH YÊU ĐÔI LỨA",
+          kind: 4,
+          quote: "Đẹp bởi qua giông bão, vẫn chọn một bàn tay.",
+          cat: "THƠ • TÌNH YÊU",
+          text: `Có người đến không làm đời bớt gió,
+chỉ ngồi bên khi giông bão đi qua.
+Không hứa sẽ mang bình minh tới sớm,
+chỉ nắm bàn tay:
+“Cứ tối cũng được mà.”
+Ta từng tưởng yêu là không thay đổi,
+đến cuối đời vẫn giống buổi ban sơ.
+Rồi năm tháng dạy hai người một chuyện:
+yêu lâu dài là học lại nhau
+qua mỗi đổi thay.
+Nếu một mai tóc không còn xanh nữa,
+mắt chẳng trong như thuở mới gặp nhau,
+mong vẫn nhận ra giữa nghìn khuôn mặt:
+người đã cùng ta
+đi hết những nông sâu.
+Tình yêu đẹp đâu vì không giông bão.
+Đẹp bởi qua giông bão,
+vẫn chọn một bàn tay.`,
+        },
+        {
+          no: "ĐỀ 05",
+          title: "THAY ĐỔI BẢN THÂN",
+          kind: 5,
+          quote: "Những thay đổi thật thường rất nhỏ và rất ít tiếng động.",
+          cat: "SUY NGẪM",
+          text: `Có một nghịch lý: chúng ta thường mong cuộc đời thay đổi trước khi chịu thay đổi chính mình.
+Ta muốn người khác hiểu mình hơn nhưng ít khi học cách nói cho rõ. Muốn được tôn trọng
+nhưng đôi lúc chưa đủ kỷ luật để tôn trọng lời hứa của chính mình. Muốn có một công việc tốt hơn,
+một mối quan hệ đẹp hơn, một tương lai khác hơn, nhưng vẫn giữ nguyên những thói quen đã tạo
+nên hiện tại.
+Thay đổi bản thân không phải sáng mai thức dậy và trở thành một con người khác. Đó có khi chỉ
+là biết im đúng lúc thay vì cố thắng một cuộc tranh cãi; đọc thêm mười trang sách thay vì lướt thêm
+một giờ trên điện thoại; dám nhận một câu “tôi sai” mà không tìm người để đổ lỗi.
+Những thay đổi thật thường rất nhỏ và rất ít tiếng động.
+Không ai vỗ tay khi một người tập bỏ thói quen trì hoãn. Không ai trao huy chương cho người
+đang học cách kiểm soát cơn giận. Cũng chẳng có ánh đèn nào chiếu vào những đêm một người âm
+thầm làm lại cuộc đời sau những lựa chọn sai.
+Nhưng chính ở đó, một con người khác đang được hình thành.
+Trưởng thành có lẽ không phải là đến một ngày ta đủ sức thay đổi cả thế giới. Trưởng thành bắt
+đầu khi ta thôi bắt thế giới chịu trách nhiệm cho tất cả những điều mình chưa chịu thay đổi ở chính mình.`,
+        },
+        {
+          no: "ĐỀ 06",
+          title: "HIẾU THẢO",
+          kind: 6,
+          quote: "Có những chữ “để mai” rất bình thường.",
+          cat: "TẠP BÚT",
+          text: `Mẹ gọi: “Chiều nay con có về ăn cơm không?”
+“Con bận lắm. Để cuối tuần nha Má.”
+Cuối tuần ấy lại có một cuộc hẹn. Rồi thêm một chuyến công tác. Rồi những cuộc điện thoại chỉ kịp nói:
+“Con đang họp.” Người trẻ có một cách rất tự nhiên để tin rằng cha mẹ luôn còn ở đó.
+Một ngày trở về, căn bếp vẫn vậy. Cái chén cũ vẫn nằm trên kệ. Chiếc ghế cha thường ngồi chẳng ai dời đi.
+Chỉ có người từng hỏi ta ăn cơm chưa không còn cất tiếng nữa.
+Lúc ấy mới hiểu: hiếu thảo không phải là một món quà thật lớn mua được khi ta đã thành công.
+Có khi chỉ là ngồi ăn hết một bữa cơm mà không nhìn điện thoại. Là nghe cha kể lại câu chuyện
+mình đã nghe mười lần mà vẫn không ngắt lời. Là nhớ đưa mẹ đi khám trước khi nhớ lịch hẹn với
+một người không quan trọng bằng mẹ.
+Chúng ta thường kiếm tiền để mong cha mẹ được sung sướng, rồi đôi khi lại dùng chính sự bận
+rộn ấy để vắng mặt trong tuổi già của họ.
+Cha mẹ không đứng yên để đợi con trưởng thành. Mỗi ngày ta lớn thêm một chút cũng là một ngày người già đi một chút.
+Có những chữ “để mai” rất bình thường. Cho đến một ngày, ta có cả phần đời còn lại - mà không còn ngày mai nào để thực hiện với một người thương.`,
+        },
+        {
+          no: "ĐỀ 07",
+          title: "CÔNG NGHỆ",
+          kind: 7,
+          quote: "Câu hỏi quan trọng không còn là công nghệ có thể làm được gì.",
+          cat: "CHÍNH LUẬN • XÃ HỘI",
+          text: `Chưa bao giờ con người có nhiều công cụ để kết nối như hôm nay. Một chiếc điện thoại có thể đưa
+chúng ta tới thư viện ở bên kia địa cầu, gặp một người cách hàng nghìn cây số, học một kỹ năng mới
+hoặc tạo ra một sản phẩm chỉ trong vài giờ. Trí tuệ nhân tạo tiếp tục đẩy giới hạn ấy đi xa hơn: máy
+móc có thể viết, vẽ, phân tích, tổng hợp và trả lời với tốc độ mà con người khó cạnh tranh.
+Nhưng câu hỏi quan trọng không còn là công nghệ có thể làm được gì.
+Câu hỏi là: con người sẽ trở thành ai khi sở hữu những khả năng ấy?
+Một công cụ thông minh không mặc nhiên làm người sử dụng thông minh hơn. Thông tin nhiều
+hơn không đồng nghĩa hiểu biết sâu hơn. Kết nối liên tục cũng không bảo đảm con người bớt cô đơn.
+Công nghệ có thể giúp chúng ta viết một bài phát biểu, nhưng không thể sống thay trải nghiệm tạo
+nên điều ta thật sự muốn nói. Nó có thể đề xuất hàng trăm câu hỏi, nhưng quyền lựa chọn câu hỏi nào
+đáng đặt ra vẫn thuộc về con người.
+Vì vậy, thách thức của thời đại công nghệ không phải cuộc chiến giữa người và máy. Đó là cuộc
+thử thách của con người với chính mình: giữa tiện lợi và lệ thuộc, giữa tốc độ và chiều sâu, giữa khả
+năng tạo ra nội dung và trách nhiệm với điều mình tạo ra.
+Máy móc càng thông minh, con người càng cần biết mình tin điều gì, chịu trách nhiệm về điều gì
+và giữ lại điều gì thuộc về phẩm giá con người.`,
+        },
+        {
+          no: "ĐỀ 08",
+          title: "CHIA TAY TÌNH ĐẦU",
+          kind: 8,
+          quote: "Sau này mình còn gặp nhau không?",
+          cat: "TRUYỆN NGẮN • ĐỐI THOẠI",
+          text: `“Sau này mình còn gặp nhau không?”
+Cô hỏi khi hai người đứng dưới mái hiên cũ. Mưa đã nhỏ hơn nhưng chẳng ai bước đi.
+“Chắc có.”
+“Và nếu gặp, anh sẽ nói gì?”
+Anh cười. Một nụ cười vụng về của tuổi hai mươi, khi người ta đủ trẻ để yêu hết lòng nhưng chưa
+đủ từng trải để biết giữ một người.
+“Anh sẽ hỏi em có hạnh phúc không.”
+“Chỉ vậy?”
+“Chỉ vậy.”
+Nhiều năm sau họ thật sự gặp lại. Không phải dưới mái hiên ấy, mà giữa một thành phố đông người.
+Cô đã khác. Anh cũng vậy. Những năm tháng không xin phép ai trước khi để lại vài nếp nhăn nơi khóe mắt.
+Họ ngồi uống cà phê. Nhắc chuyện cũ. Cười nhiều hơn tưởng tượng.
+Đến lúc chia tay, cô chợt hỏi: “Anh không hỏi câu ngày xưa à?”
+Anh nhìn cô thật lâu. “Thấy em bình yên rồi. Không cần hỏi nữa.”
+Có những tình yêu không đi cùng ta đến cuối đời nhưng vẫn đi cùng ta qua một phần rất sâu của ký ức.
+Tình đầu đôi khi không phải người ta phải tìm cách lấy lại. Nó là nơi ta từng học cách rung động,
+vụng về, tổn thương và trưởng thành.
+Rời quán, họ đi về hai hướng. Không ai ngoái lại. Không phải vì đã quên. Mà có lẽ vì cuối cùng, cả
+hai đều hiểu: có những người được cuộc đời cho gặp để thương thật lòng, chứ không nhất thiết để sở hữu đến cuối cùng.`,
+        },
+        {
+          no: "ĐỀ 10",
+          title: "THIÊN TAI",
+          kind: 9,
+          quote: "Cho bà con tôi nước sạch trước. Nhà tôi còn chịu được.",
+          cat: "CHÍNH LUẬN • PHÓNG SỰ",
+          text: `Sau cơn bão, người đàn ông đứng trước nơi từng là căn nhà của mình.
+Mái đã mất. Tường đổ. Bùn phủ lên chiếc bàn học của đứa con. Một phóng viên hỏi ông cần gì
+nhất lúc này.
+Ông im lặng vài giây rồi nói: “Cho bà con tôi nước sạch trước. Nhà tôi còn chịu được.”
+Giữa thiên tai, đôi khi một câu nói ngắn cho thấy sức nặng của con người.
+Bão, lũ, sạt lở hay hạn hán không lựa chọn người giàu hay nghèo trước khi đi qua. Nhưng mức độ
+tổn thương của mỗi cộng đồng lại phụ thuộc rất nhiều vào những gì con người đã chuẩn bị trước đó:
+hệ thống cảnh báo, quy hoạch, cơ sở hạ tầng, năng lực cứu hộ và cả ý thức bảo vệ môi trường.
+Vì vậy, nói về thiên tai không thể chỉ nói bằng lòng thương sau thảm họa.
+Những chuyến xe cứu trợ rất cần. Những bàn tay sẻ chia rất quý. Nhưng trách nhiệm với cộng đồng còn
+phải bắt đầu sớm hơn: từ phòng ngừa, khoa học, quản trị, giáo dục và những quyết định phát triển không
+đánh đổi sự an toàn lâu dài lấy lợi ích trước mắt.
+Sau mỗi cơn bão, điều đáng hỏi không chỉ là chúng ta đã cứu được bao nhiêu người. Còn phải hỏi:
+chúng ta đã học được gì để lần sau ít người phải chờ được cứu hơn?
+Lòng nhân ái giúp con người đứng dậy sau thiên tai. Còn trách nhiệm giúp xã hội bớt phải trả giá trước thiên tai.`,
+        },
+        {
+          no: "ĐỀ 11",
+          title: "ĐỐI DIỆN THẤT BẠI",
+          kind: 10,
+          quote: "Thất bại là một sự kiện. Đừng biến nó thành căn cước.",
+          cat: "SUY NGẪM",
+          text: `Không phải thất bại nào cũng chứa sẵn một bài học.
+Có những lần thua chỉ khiến ta đau. Có những cánh cửa đóng lại chẳng mở ngay một cánh cửa khác.
+Có những cố gắng rất nhiều vẫn không đem về kết quả tương xứng.
+Bởi vậy, đừng vội lãng mạn hóa thất bại.
+Điều đáng nói không nằm ở việc ta đã ngã đẹp thế nào, mà ở cách ta nhìn thẳng vào nguyên nhân của cú ngã ấy.
+Nếu thiếu năng lực, hãy học. Nếu chủ quan, hãy sửa. Nếu lựa chọn sai, hãy chịu trách nhiệm. Nếu đã làm hết sức
+nhưng hoàn cảnh không cho một kết quả khác, hãy đủ tỉnh táo để chấp nhận.
+Con người mạnh không phải người luôn thắng. Đó là người không dùng thất bại để kết án giá trị của chính mình.
+Một kỳ thi trượt không chứng minh ta là người thất bại. Một dự án đổ vỡ không có quyền định nghĩa cả sự nghiệp.
+Một người rời đi cũng không chứng minh ta không đáng được yêu.
+Thất bại là một sự kiện. Đừng biến nó thành căn cước.
+Có thể sau một lần ngã, ta chưa đứng lên ngay. Cứ đau nếu cần. Cứ nghỉ nếu mệt. Nhưng khi đã nhìn đủ sâu vào điều
+vừa xảy ra, hãy mang theo phần hiểu biết và để phần cay đắng ở lại.
+Bởi trưởng thành không phải là chưa từng thua. Mà là sau mỗi lần thua, ta hiểu rõ hơn mình phải sống thế nào.`,
+        },
+        {
+          no: "ĐỀ 12",
+          title: "NGHỀ MC",
+          kind: 11,
+          quote: "Micro có một đặc tính rất công bằng.",
+          cat: "TỰ SỰ • CHÍNH LUẬN NGHỀ NGHIỆP",
+          text: `Một MC bước ra sân khấu. Ánh sáng bật lên. Nhạc nổi. Khán giả nhìn về phía người đang cầm micro.
+Trong vài giây ấy, người ta dễ nghĩ nghề MC bắt đầu bằng khả năng nói. Không hẳn.
+Trước một câu nói tốt là rất nhiều giờ đọc, tìm hiểu, biên tập, tập luyện và tự hỏi mình đã hiểu điều sắp nói hay chưa.
+Trước sự tự tin trên sân khấu là kỷ luật ở những nơi không có khán giả. Và trước khả năng khiến người khác lắng nghe
+là năng lực biết lắng nghe người khác.
+Micro có một đặc tính rất công bằng: nó khuếch đại giọng nói, nhưng đồng thời cũng khuếch đại sự hời hợt.
+Một người dẫn có thể nhớ hàng trăm câu chữ nhưng vẫn không chạm được người nghe nếu bản thân không hiểu câu chuyện.
+Ngược lại, một khoảng lặng đúng lúc đôi khi nói nhiều hơn một đoạn dẫn được viết rất đẹp.
+Nghề MC vì thế không chỉ đào tạo một người nói hay. Nó đòi hỏi người làm nghề biết đọc, biết nghĩ, biết hỏi, biết nghe,
+biết ứng xử và biết chịu trách nhiệm về lời nói của mình.
+Rồi sẽ có ngày ánh đèn sân khấu tắt. Tiếng vỗ tay cũng dừng.
+Điều còn lại không phải ta đã nói bao nhiêu câu thật hay. Mà là sau khi ta nói xong, người nghe đã nhận được điều gì.
+Bởi micro có thể trao cho một người quyền được nói. Nhưng chỉ tri thức, nhân cách và lao động nghề nghiệp mới khiến lời nói ấy đáng được lắng nghe.`,
+        },
+      ];
+
+      const selection = document.getElementById("selection"),
+        reveal = document.getElementById("reveal"),
+        exam = document.getElementById("exam"),
+        quote = document.getElementById("quote"),
+        openPrompt = document.getElementById("openPrompt"),
+        timer = document.getElementById("timer"),
+        promptEl = document.getElementById("prompt");
+      let chosen = null,
+        interval = null,
+        remaining = 120;
+      const buttons = [...selection.querySelectorAll(".mystery")];
+      function shuffle(a) {
+        return [...a].sort(() => Math.random() - 0.5);
+      }
+      function render() {
+        const items = shuffle(DATA);
+        buttons.forEach((b, i) => {
+          b.dataset.idx = i;
+          b.classList.remove("chosen");
+          b.onclick = () => choose(items[i], b);
+        });
+        return items;
+      }
+      let items = render();
+      function choose(item, b) {
+        chosen = item;
+        buttons.forEach((x) => x.classList.remove("chosen"));
+        b.classList.add("chosen");
+        selection.classList.add("fade");
+        setTimeout(() => showReveal(item), 700);
+      }
+      function showReveal(item) {
+        reveal.classList.add("show");
+        quote.innerHTML = "";
+        item.quote.split(/\s+/).forEach((w, i) => {
+          const s = document.createElement("span");
+          s.textContent = w;
+          s.style.animationDelay = i * 0.075 + "s";
+          quote.appendChild(s);
+        });
+        openPrompt.onclick = () => showExam(item);
+      }
+      function showExam(item) {
+        reveal.classList.remove("show");
+        exam.classList.add("show");
+        document.getElementById("examNo").textContent = item.no;
+        document.getElementById("examTitle").textContent = item.title;
+        document.getElementById("examKind").textContent = item.cat;
+        promptEl.textContent = item.text;
+        fitPrompt();
+        startTimer();
+      }
+      function fitPrompt() {
+        let size = 29;
+        promptEl.style.fontSize = size + "px";
+        while (promptEl.scrollHeight > promptEl.clientHeight && size > 14) {
+          size -= 1;
+          promptEl.style.fontSize = size + "px";
+        }
+      }
+      function startTimer() {
+        clearInterval(interval);
+        remaining = 120;
+        timer.textContent = "02:00";
+        timer.classList.remove("warn");
+        interval = setInterval(() => {
+          remaining--;
+          const m = String(Math.floor(remaining / 60)).padStart(2, "0"),
+            s = String(remaining % 60).padStart(2, "0");
+          timer.textContent = m + ":" + s;
+          if (remaining <= 15) timer.classList.add("warn");
+          if (remaining <= 0) clearInterval(interval);
+        }, 1000);
+      }
+      document.getElementById("back").onclick = () => {
+        clearInterval(interval);
+        exam.classList.remove("show");
+        selection.classList.remove("fade");
+        reveal.classList.remove("show");
+        items = render();
+      };
+      window.addEventListener("resize", () => {
+        if (exam.classList.contains("show")) fitPrompt();
+      });
+      document.addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && exam.classList.contains("show"))
+          document.getElementById("back").click();
+      });
+    </script>
+  </body>
+</html>

@@ -1,0 +1,1121 @@
+<!doctype html>
+<html lang="vi">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>THE STORIES — Mystery Selection</title>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,500;0,600;0,700;1,500&display=swap");
+
+      :root {
+        --bg: #050507;
+        --bg-radial: radial-gradient(circle at 50% 0%, #1a1611 0%, #050507 60%);
+        --paper: #f2efe8;
+        --muted: #8b8e94;
+        --gold: #d4af37;
+        --gold-glow: rgba(212, 175, 55, 0.4);
+        --gold-gradient: linear-gradient(135deg, #f3e7e9 0%, #d4af37 50%, #997a15 100%);
+        --glass-bg: rgba(20, 21, 24, 0.4);
+        --glass-border: rgba(255, 255, 255, 0.08);
+        --line: rgba(255, 255, 255, 0.08);
+      }
+      * {
+        box-sizing: border-box;
+      }
+      html,
+      body {
+        margin: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        background: var(--bg);
+      }
+      body {
+        font-family: "Be Vietnam Pro", Arial, sans-serif;
+        color: #fff;
+        background-image: var(--bg-radial);
+      }
+      button {
+        font: inherit;
+        outline: none;
+        border: none;
+        background: none;
+      }
+
+      /* Hạt nhiễu tạo cảm giác điện ảnh (Cinematic Grain) */
+      .app {
+        position: relative;
+        width: 100vw;
+        height: 100vh;
+        overflow: hidden;
+      }
+      .grain {
+        position: absolute;
+        inset: -50%;
+        opacity: 0.04;
+        pointer-events: none;
+        background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)'/%3E%3C/svg%3E");
+        animation: grain 8s steps(10) infinite;
+        z-index: 1;
+      }
+      @keyframes grain {
+        0%,
+        100% {
+          transform: translate(0, 0);
+        }
+        10% {
+          transform: translate(-5%, -10%);
+        }
+        30% {
+          transform: translate(3%, -15%);
+        }
+        50% {
+          transform: translate(12%, 9%);
+        }
+        70% {
+          transform: translate(9%, 4%);
+        }
+        90% {
+          transform: translate(-1%, 7%);
+        }
+      }
+
+      /* Ánh sáng sân khấu (Stage Spotlight) */
+      .spotlight {
+        position: absolute;
+        top: -20vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80vw;
+        height: 60vh;
+        background: radial-gradient(
+          ellipse at center,
+          rgba(212, 175, 55, 0.15) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 2;
+        mix-blend-mode: screen;
+      }
+
+      /* Header */
+      .top {
+        position: absolute;
+        top: 5vh;
+        left: 5vw;
+        right: 5vw;
+        display: flex;
+        justify-content: space-between;
+        z-index: 10;
+      }
+      .brand .eyebrow {
+        font-size: 10px;
+        letter-spacing: 0.4em;
+        color: var(--gold);
+        font-weight: 600;
+        text-transform: uppercase;
+      }
+      .brand h1 {
+        font-family: "Playfair Display", serif;
+        font-weight: 600;
+        font-size: clamp(40px, 5vw, 70px);
+        line-height: 1;
+        margin: 12px 0;
+        background: var(--gold-gradient);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.5));
+      }
+      .brand p {
+        margin: 0;
+        color: var(--muted);
+        font-size: 11px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      .status {
+        text-align: right;
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.25em;
+        text-transform: uppercase;
+        font-weight: 500;
+      }
+      .status b {
+        display: block;
+        color: #fff;
+        font-size: 28px;
+        letter-spacing: 0.05em;
+        margin-top: 5px;
+        font-weight: 300;
+      }
+
+      /* Lưới lựa chọn */
+      .selection {
+        position: absolute;
+        left: 6vw;
+        right: 6vw;
+        top: 22vh;
+        bottom: 12vh;
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        grid-template-rows: repeat(3, 1fr);
+        gap: 20px 3vw;
+        align-items: center;
+        justify-items: center;
+        z-index: 5;
+      }
+
+      /* Thẻ (Cards) */
+      .card {
+        width: min(13vw, 140px);
+        height: min(13vw, 140px);
+        min-width: 90px;
+        min-height: 90px;
+        position: relative;
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+        animation: float 6s ease-in-out infinite;
+        border-radius: 12px;
+      }
+      .card:nth-child(even) {
+        animation-direction: reverse;
+      }
+      .card:nth-child(2) {
+        animation-delay: -0.5s;
+      }
+      .card:nth-child(3) {
+        animation-delay: -1.2s;
+      }
+      .card:nth-child(4) {
+        animation-delay: -2.1s;
+      }
+      .card:nth-child(5) {
+        animation-delay: -3s;
+      }
+      .card:nth-child(6) {
+        animation-delay: -4.2s;
+      }
+      .card:nth-child(7) {
+        animation-delay: -1.5s;
+      }
+      .card:nth-child(8) {
+        animation-delay: -2.8s;
+      }
+      .card:nth-child(9) {
+        animation-delay: -3.7s;
+      }
+      .card:nth-child(10) {
+        animation-delay: -4.5s;
+      }
+      .card:nth-child(11) {
+        animation-delay: -5.2s;
+      }
+      @keyframes float {
+        0%,
+        100% {
+          transform: translateY(0);
+        }
+        50% {
+          transform: translateY(-12px);
+        }
+      }
+
+      /* Khối vật thể 3D giả lập */
+      .object {
+        width: 65%;
+        height: 65%;
+        position: relative;
+        border: 1px solid rgba(212, 175, 55, 0.3);
+        background: linear-gradient(135deg, rgba(255, 255, 255, 0.1), rgba(255, 255, 255, 0.01));
+        box-shadow:
+          0 15px 35px rgba(0, 0, 0, 0.6),
+          inset 0 0 20px rgba(212, 175, 55, 0.1);
+        backdrop-filter: blur(4px);
+        -webkit-backdrop-filter: blur(4px);
+        transition: all 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+      }
+      .card:hover {
+        transform: translateY(-15px) scale(1.1);
+        z-index: 10;
+      }
+      .card:hover .object {
+        border-color: var(--gold);
+        box-shadow:
+          0 0 40px var(--gold-glow),
+          inset 0 0 30px rgba(255, 255, 255, 0.15);
+        background: linear-gradient(135deg, rgba(212, 175, 55, 0.2), rgba(255, 255, 255, 0.02));
+      }
+
+      .card .name {
+        position: absolute;
+        bottom: -25px;
+        white-space: nowrap;
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        color: var(--muted);
+        font-weight: 600;
+        opacity: 0.6;
+        transition: 0.4s;
+      }
+      .card:hover .name {
+        color: var(--gold);
+        opacity: 1;
+        text-shadow: 0 0 10px var(--gold-glow);
+      }
+
+      /* Hình dáng vật thể */
+      .object::after {
+        content: "";
+        position: absolute;
+        inset: 15%;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: 0.4s;
+      }
+      .card:hover .object::after {
+        border-color: rgba(212, 175, 55, 0.5);
+      }
+      .o1 {
+        transform: rotate(45deg);
+        border-radius: 4px;
+      }
+      .o1::after {
+        transform: rotate(-45deg);
+        border-radius: 50%;
+      }
+      .o2 {
+        border-radius: 50%;
+        border-width: 2px;
+      }
+      .o2::after {
+        border-radius: 50%;
+      }
+      .o3 {
+        border-radius: 50%;
+      }
+      .o3::after {
+        border-radius: 50%;
+        transform: scale(0.5);
+      }
+      .o4 {
+        border-radius: 50% 50% 44% 44%;
+        transform: scale(0.75, 1.1);
+      }
+      .o5 {
+        transform: rotate(45deg);
+        border-radius: 3px;
+      }
+      .o6 {
+        border-radius: 10px 10px 30px 30px;
+        transform: scale(0.75, 1);
+      }
+      .o7 {
+        border-radius: 15px;
+        transform: scale(0.75, 1.1);
+      }
+      .o8 {
+        transform: rotate(-8deg);
+        border-radius: 3px;
+      }
+      .o9 {
+        clip-path: polygon(50% 0, 100% 42%, 50% 100%, 0 42%);
+        border-radius: 50%;
+      }
+      .o10 {
+        border-radius: 55% 12% 55% 12%;
+        transform: rotate(-25deg) scale(0.9);
+      }
+      .o11 {
+        border-radius: 50%;
+        transform: scale(0.65);
+        box-shadow: 0 0 34px rgba(202, 169, 107, 0.16);
+      }
+
+      /* Hướng dẫn dưới cùng */
+      .instruction {
+        position: absolute;
+        left: 50%;
+        bottom: 5vh;
+        transform: translateX(-50%);
+        color: var(--muted);
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        z-index: 5;
+        white-space: nowrap;
+        font-weight: 500;
+      }
+      .instruction span {
+        color: var(--gold);
+        font-weight: 700;
+      }
+
+      /* Modal Khám Phá (Reveal) */
+      .modal {
+        position: absolute;
+        inset: 0;
+        z-index: 50;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background: rgba(5, 5, 7, 0.85);
+        backdrop-filter: blur(15px);
+        -webkit-backdrop-filter: blur(15px);
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.6s ease;
+      }
+      .modal.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .reveal-box {
+        width: min(1100px, 85vw);
+        text-align: center;
+        padding: 60px 40px;
+        border: 1px solid var(--glass-border);
+        background: linear-gradient(
+          180deg,
+          rgba(255, 255, 255, 0.03) 0%,
+          rgba(255, 255, 255, 0) 100%
+        );
+        border-radius: 2px;
+        box-shadow: 0 30px 60px rgba(0, 0, 0, 0.8);
+      }
+      .reveal-kicker {
+        font-size: 10px;
+        letter-spacing: 0.5em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+      .reveal-quote {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(28px, 3.5vw, 56px);
+        font-style: italic;
+        line-height: 1.3;
+        min-height: 120px;
+        margin: 35px auto;
+        max-width: 900px;
+        color: #fff;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+      }
+      .word {
+        opacity: 0;
+        display: inline-block;
+        margin-right: 0.25em;
+        transform: translateY(15px);
+        filter: blur(4px);
+      }
+      .word.in {
+        animation: wordIn 0.6s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+      }
+      @keyframes wordIn {
+        to {
+          opacity: 1;
+          transform: none;
+          filter: blur(0);
+        }
+      }
+      .reveal-hint {
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        color: #555a62;
+        text-transform: uppercase;
+        margin-bottom: 30px;
+      }
+
+      /* Nút bấm (Button) */
+      .reveal-button {
+        padding: 16px 40px;
+        border: 1px solid var(--gold);
+        background: transparent;
+        color: var(--gold);
+        cursor: pointer;
+        font-size: 10px;
+        font-weight: 700;
+        letter-spacing: 0.3em;
+        text-transform: uppercase;
+        transition: 0.4s;
+        position: relative;
+        overflow: hidden;
+      }
+      .reveal-button::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: var(--gold);
+        transform: scaleY(0);
+        transform-origin: bottom;
+        transition: transform 0.4s ease;
+        z-index: -1;
+      }
+      .reveal-button:hover {
+        color: #000;
+        box-shadow: 0 0 25px var(--gold-glow);
+      }
+      .reveal-button:hover::before {
+        transform: scaleY(1);
+      }
+
+      /* Giao diện Đề Thi (Exam Paper) */
+      .exam {
+        position: absolute;
+        inset: 0;
+        z-index: 70;
+        opacity: 0;
+        visibility: hidden;
+        transition: all 0.6s ease;
+        overflow: hidden;
+        padding: 5vh 6vw;
+        background: var(--bg);
+      }
+      .exam.show {
+        opacity: 1;
+        visibility: visible;
+      }
+      .exam::before {
+        content: "";
+        position: absolute;
+        inset: 0;
+        pointer-events: none;
+        background: radial-gradient(circle at 80% 20%, rgba(212, 175, 55, 0.08), transparent 40%);
+      }
+
+      .exam-header {
+        position: relative;
+        display: flex;
+        justify-content: space-between;
+        align-items: flex-start;
+        border-bottom: 1px solid var(--line);
+        padding-bottom: 2.5vh;
+        z-index: 2;
+      }
+      .exam-left .small {
+        font-size: 10px;
+        letter-spacing: 0.4em;
+        color: var(--gold);
+        text-transform: uppercase;
+        font-weight: 600;
+      }
+      .exam-title {
+        font-family: "Playfair Display", serif;
+        font-size: clamp(32px, 4vw, 60px);
+        font-weight: 600;
+        line-height: 1.1;
+        margin: 12px 0 8px;
+        color: #fff;
+        text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+      }
+      .exam-no {
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: var(--muted);
+        text-transform: uppercase;
+      }
+
+      .clock {
+        text-align: right;
+        min-width: 160px;
+      }
+      .clock-label {
+        font-size: 9px;
+        letter-spacing: 0.3em;
+        color: var(--muted);
+      }
+      .clock-value {
+        font-size: clamp(40px, 4vw, 60px);
+        font-weight: 300;
+        letter-spacing: 0.02em;
+        margin-top: 5px;
+        font-family: "Playfair Display", serif;
+        color: var(--gold);
+      }
+      .clock-value.danger {
+        color: #ff4757;
+        animation: pulseRed 1s infinite;
+        text-shadow: 0 0 15px rgba(255, 71, 87, 0.4);
+      }
+      @keyframes pulseRed {
+        50% {
+          opacity: 0.5;
+        }
+      }
+
+      .paper {
+        position: relative;
+        height: calc(100vh - 24vh);
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        overflow: hidden;
+        z-index: 2;
+        margin-top: 2vh;
+      }
+      .paper-inner {
+        width: min(1200px, 90vw);
+        height: 100%;
+        padding: 4vh 3vw 2vh;
+        display: flex;
+        flex-direction: column;
+        background: var(--glass-bg);
+        backdrop-filter: blur(20px);
+        -webkit-backdrop-filter: blur(20px);
+        border: 1px solid var(--glass-border);
+        border-radius: 8px;
+        box-shadow: 0 20px 50px rgba(0, 0, 0, 0.3);
+      }
+      .category {
+        font-size: 10px;
+        letter-spacing: 0.3em;
+        color: var(--gold);
+        text-transform: uppercase;
+        margin-bottom: 2.5vh;
+        font-weight: 600;
+      }
+      .text {
+        color: #e9e5dc;
+        font-family: "Playfair Display", serif;
+        font-size: clamp(16px, 1.5vw, 22px);
+        line-height: 1.6;
+        white-space: pre-line;
+        overflow-y: auto;
+        padding-right: 15px;
+        font-weight: 400;
+      }
+      /* Tùy chỉnh thanh cuộn cho văn bản */
+      .text::-webkit-scrollbar {
+        width: 4px;
+      }
+      .text::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.02);
+      }
+      .text::-webkit-scrollbar-thumb {
+        background: rgba(212, 175, 55, 0.3);
+        border-radius: 4px;
+      }
+
+      .requirement {
+        margin-top: auto;
+        padding-top: 2vh;
+        border-top: 1px solid var(--line);
+        color: var(--muted);
+        font-size: 11px;
+        line-height: 1.6;
+        letter-spacing: 0.05em;
+      }
+      .requirement strong {
+        color: var(--gold);
+        letter-spacing: 0.15em;
+        font-weight: 600;
+      }
+
+      .exam-actions {
+        position: absolute;
+        right: 6vw;
+        bottom: 3vh;
+        z-index: 10;
+      }
+      .back {
+        border: 1px solid var(--line);
+        background: rgba(255, 255, 255, 0.02);
+        color: var(--muted);
+        padding: 12px 20px;
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.25em;
+        cursor: pointer;
+        transition: 0.3s;
+        backdrop-filter: blur(5px);
+      }
+      .back:hover {
+        color: #fff;
+        border-color: var(--gold);
+        background: rgba(212, 175, 55, 0.1);
+      }
+
+      /* Thông báo khóa lựa chọn */
+      .toast {
+        position: absolute;
+        left: 50%;
+        top: 45%;
+        transform: translate(-50%, -50%);
+        z-index: 80;
+        color: #fff;
+        font-size: 14px;
+        font-weight: 700;
+        letter-spacing: 0.5em;
+        text-transform: uppercase;
+        opacity: 0;
+        pointer-events: none;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        background: rgba(0, 0, 0, 0.4);
+        padding: 15px 30px;
+        border-radius: 4px;
+        border: 1px solid var(--glass-border);
+        backdrop-filter: blur(10px);
+      }
+      .toast.show {
+        animation: toastAnim 1.5s cubic-bezier(0.16, 1, 0.3, 1) both;
+      }
+      @keyframes toastAnim {
+        0% {
+          opacity: 0;
+          transform: translate(-50%, -30%) scale(0.9);
+          filter: blur(5px);
+        }
+        20%,
+        80% {
+          opacity: 1;
+          transform: translate(-50%, -50%) scale(1);
+          filter: blur(0);
+        }
+        100% {
+          opacity: 0;
+          transform: translate(-50%, -60%) scale(1.05);
+          filter: blur(5px);
+        }
+      }
+
+      @media (max-width: 850px) {
+        .selection {
+          top: 20vh;
+          gap: 15px 2vw;
+        }
+        .card {
+          width: 18vw;
+          height: 18vw;
+        }
+        .card .name {
+          font-size: 7px;
+          bottom: -18px;
+        }
+        .top {
+          top: 3vh;
+        }
+        .brand p {
+          font-size: 8px;
+        }
+        .instruction {
+          bottom: 2vh;
+          font-size: 8px;
+        }
+        .exam {
+          padding: 3vh 4vw;
+        }
+        .paper-inner {
+          width: 95vw;
+          padding: 3vh 4vw 2vh;
+        }
+        .text {
+          font-size: 14px;
+          line-height: 1.5;
+        }
+        .requirement {
+          font-size: 9px;
+        }
+        .brand h1 {
+          font-size: 32px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="app" id="app">
+      <div class="grain"></div>
+      <div class="spotlight"></div>
+
+      <header class="top">
+        <div class="brand">
+          <div class="eyebrow">NHÀ VĂN HÓA THANH NIÊN TP.HCM • MC CHUYÊN SÂU K27</div>
+          <h1>THE STORIES</h1>
+          <p>11 vật thể • 11 câu chuyện • một lựa chọn</p>
+        </div>
+        <div class="status">MYSTERY STORIES<br /><b>11</b></div>
+      </header>
+
+      <section class="selection" id="selection"></section>
+
+      <div class="instruction">Hãy chọn <span>một vật thể</span> bằng trực giác</div>
+
+      <div class="modal" id="modal">
+        <div class="reveal-box">
+          <div class="reveal-kicker">Một mảnh câu chuyện đã được mở</div>
+          <div class="reveal-quote" id="quote"></div>
+          <div class="reveal-hint">Không thể thay đổi lựa chọn</div>
+          <button class="reveal-button" id="openExam">Mở kịch bản</button>
+        </div>
+      </div>
+
+      <div class="toast" id="toast">CHOICE LOCKED</div>
+
+      <section class="exam" id="exam">
+        <div class="exam-header">
+          <div class="exam-left">
+            <div class="small" id="examNo"></div>
+            <div class="exam-title" id="examTitle"></div>
+            <div class="exam-no" id="examCategory"></div>
+          </div>
+          <div class="clock">
+            <div class="clock-label">THỜI GIAN PHÁT BIỂU</div>
+            <div class="clock-value" id="clock">02:00</div>
+          </div>
+        </div>
+
+        <div class="paper">
+          <div class="paper-inner">
+            <div class="category">VĂN BẢN DỰ THI</div>
+            <div class="text" id="examText"></div>
+            <div class="requirement">
+              <strong>YÊU CẦU:</strong> Đọc diễn cảm theo cảm nhận về nội dung, tinh thần và sắc
+              thái văn bản. Sau đó trình bày cảm nhận, suy nghĩ hoặc góc nhìn cá nhân về vấn đề được
+              gợi ra. Thời gian phát biểu: tối đa 2 phút.
+            </div>
+          </div>
+        </div>
+        <div class="exam-actions"><button class="back" id="back">← QUAY LẠI MÀN CHỌN</button></div>
+      </section>
+    </div>
+
+    <script>
+      const DATA = [
+        {
+          no: "ĐỀ 01",
+          title: "THA THỨ",
+          kind: 1,
+          quote: "Không phải họ. Là ta.",
+          cat: "THƠ • SUY NGẪM",
+          text: `Có những vết đau không cần người xin lỗi,
+mới chịu lành trong một buổi chiều yên.
+Ta tha thứ chẳng vì quên tất cả,
+chỉ vì lòng không muốn giữ ưu phiền.
+Người làm đau ta có khi đi rất nhẹ,
+còn chính ta mang nặng suốt đường dài.
+Đến một ngày bàn tay thôi nắm chặt,
+mới hay mình vừa trả tự do cho ai.
+Không phải họ.
+Là ta.
+Tha thứ chẳng làm quá khứ thành đúng,
+cũng không buộc ta trở lại như xưa.
+Chỉ là giữa một đời nhiều giông gió,
+ta chọn lòng mình
+đừng hóa thành cơn mưa.`,
+        },
+        {
+          no: "ĐỀ 02",
+          title: "HOÀI BÃO",
+          kind: 2,
+          quote: "Hoài bão không phải điều ta nói thật lớn...",
+          cat: "THƠ • SUY NGẪM",
+          text: `Đừng hỏi tuổi hai mươi đường bao xa phía trước,
+khi bàn chân còn biết bước thì cứ bước mà đi.
+Có những giấc mơ chưa một lần thành hình dáng,
+đã âm thầm giữ một đời người khỏi sống vô tri.
+Đường lớn không sinh ra từ những ngày thuận gió,
+ước vọng chẳng trưởng thành trong tiếng vỗ tay thôi.
+Có lúc phải một mình đi qua miền nghi hoặc,
+tự nhóm lửa trong tim khi ánh sáng xa rồi.
+Hoài bão không phải điều ta nói thật lớn,
+mà là điều còn lại lúc chẳng một ai nhìn.
+Sau mọi huy hoàng, nếu có ngày chạm tới,
+xin nhớ con đường dài
+đã bắt đầu từ một bước chân tin.`,
+        },
+        {
+          no: "ĐỀ 03",
+          title: "TỔ QUỐC",
+          kind: 3,
+          quote: "Tổ quốc lớn lao bắt đầu từ những điều rất nhỏ.",
+          cat: "THƠ • ĐẤT NƯỚC",
+          text: `Tổ quốc đâu chỉ trên đường biên cột mốc,
+hay lá cờ bay đỏ một khoảng trời.
+Tổ quốc có trong bàn tay mẹ gầy vun đất,
+trong tiếng cha gọi con giữa một chiều quê.
+Có người giữ bình yên bằng đời mình phía trước,
+có người xây ngày mai từ lớp học, công trường.
+Có những điều bình thường ta đi qua chẳng nhớ,
+đến một ngày xa mới biết đó quê hương.
+Tôi yêu đất nước không vì lời phải nói,
+mà bởi đời tôi đã mọc rễ nơi này.
+Một tiếng Việt đau cũng thành lời để khóc,
+một tiếng Việt vui
+đủ gọi triệu bàn tay.
+Tổ quốc lớn lao
+bắt đầu từ những điều rất nhỏ:
+biết sống sao
+để xứng đáng với nơi mình thuộc về.`,
+        },
+        {
+          no: "ĐỀ 04",
+          title: "TÌNH YÊU ĐÔI LỨA",
+          kind: 4,
+          quote: "Đẹp bởi qua giông bão, vẫn chọn một bàn tay.",
+          cat: "THƠ • TÌNH YÊU",
+          text: `Có người đến không làm đời bớt gió,
+chỉ ngồi bên khi giông bão đi qua.
+Không hứa sẽ mang bình minh tới sớm,
+chỉ nắm bàn tay:
+“Cứ tối cũng được mà.”
+Ta từng tưởng yêu là không thay đổi,
+đến cuối đời vẫn giống buổi ban sơ.
+Rồi năm tháng dạy hai người một chuyện:
+yêu lâu dài là học lại nhau
+qua mỗi đổi thay.
+Nếu một mai tóc không còn xanh nữa,
+mắt chẳng trong như thuở mới gặp nhau,
+mong vẫn nhận ra giữa nghìn khuôn mặt:
+người đã cùng ta
+đi hết những nông sâu.
+Tình yêu đẹp đâu vì không giông bão.
+Đẹp bởi qua giông bão,
+vẫn chọn một bàn tay.`,
+        },
+        {
+          no: "ĐỀ 05",
+          title: "THAY ĐỔI BẢN THÂN",
+          kind: 5,
+          quote: "Những thay đổi thật thường rất nhỏ và rất ít tiếng động.",
+          cat: "SUY NGẪM",
+          text: `Có một nghịch lý: chúng ta thường mong cuộc đời thay đổi trước khi chịu thay đổi chính mình.
+Ta muốn người khác hiểu mình hơn nhưng ít khi học cách nói cho rõ. Muốn được tôn trọng
+nhưng đôi lúc chưa đủ kỷ luật để tôn trọng lời hứa của chính mình. Muốn có một công việc tốt hơn,
+một mối quan hệ đẹp hơn, một tương lai khác hơn, nhưng vẫn giữ nguyên những thói quen đã tạo
+nên hiện tại.
+Thay đổi bản thân không phải sáng mai thức dậy và trở thành một con người khác. Đó có khi chỉ
+là biết im đúng lúc thay vì cố thắng một cuộc tranh cãi; đọc thêm mười trang sách thay vì lướt thêm
+một giờ trên điện thoại; dám nhận một câu “tôi sai” mà không tìm người để đổ lỗi.
+Những thay đổi thật thường rất nhỏ và rất ít tiếng động.
+Không ai vỗ tay khi một người tập bỏ thói quen trì hoãn. Không ai trao huy chương cho người
+đang học cách kiểm soát cơn giận. Cũng chẳng có ánh đèn nào chiếu vào những đêm một người âm
+thầm làm lại cuộc đời sau những lựa chọn sai.
+Nhưng chính ở đó, một con người khác đang được hình thành.
+Trưởng thành có lẽ không phải là đến một ngày ta đủ sức thay đổi cả thế giới. Trưởng thành bắt
+đầu khi ta thôi bắt thế giới chịu trách nhiệm cho tất cả những điều mình chưa chịu thay đổi ở chính mình.`,
+        },
+        {
+          no: "ĐỀ 06",
+          title: "HIẾU THẢO",
+          kind: 6,
+          quote: "Có những chữ “để mai” rất bình thường.",
+          cat: "TẠP BÚT",
+          text: `Mẹ gọi: “Chiều nay con có về ăn cơm không?”
+“Con bận lắm. Để cuối tuần nha Má.”
+Cuối tuần ấy lại có một cuộc hẹn. Rồi thêm một chuyến công tác. Rồi những cuộc điện thoại chỉ kịp nói:
+“Con đang họp.” Người trẻ có một cách rất tự nhiên để tin rằng cha mẹ luôn còn ở đó.
+Một ngày trở về, căn bếp vẫn vậy. Cái chén cũ vẫn nằm trên kệ. Chiếc ghế cha thường ngồi chẳng ai dời đi.
+Chỉ có người từng hỏi ta ăn cơm chưa không còn cất tiếng nữa.
+Lúc ấy mới hiểu: hiếu thảo không phải là một món quà thật lớn mua được khi ta đã thành công.
+Có khi chỉ là ngồi ăn hết một bữa cơm mà không nhìn điện thoại. Là nghe cha kể lại câu chuyện
+mình đã nghe mười lần mà vẫn không ngắt lời. Là nhớ đưa mẹ đi khám trước khi nhớ lịch hẹn với
+một người không quan trọng bằng mẹ.
+Chúng ta thường kiếm tiền để mong cha mẹ được sung sướng, rồi đôi khi lại dùng chính sự bận
+rộn ấy để vắng mặt trong tuổi già của họ.
+Cha mẹ không đứng yên để đợi con trưởng thành. Mỗi ngày ta lớn thêm một chút cũng là một ngày người già đi một chút.
+Có những chữ “để mai” rất bình thường. Cho đến một ngày, ta có cả phần đời còn lại - mà không còn ngày mai nào để thực hiện với một người thương.`,
+        },
+        {
+          no: "ĐỀ 07",
+          title: "CÔNG NGHỆ",
+          kind: 7,
+          quote: "Câu hỏi quan trọng không còn là công nghệ có thể làm được gì.",
+          cat: "CHÍNH LUẬN • XÃ HỘI",
+          text: `Chưa bao giờ con người có nhiều công cụ để kết nối như hôm nay. Một chiếc điện thoại có thể đưa
+chúng ta tới thư viện ở bên kia địa cầu, gặp một người cách hàng nghìn cây số, học một kỹ năng mới
+hoặc tạo ra một sản phẩm chỉ trong vài giờ. Trí tuệ nhân tạo tiếp tục đẩy giới hạn ấy đi xa hơn: máy
+móc có thể viết, vẽ, phân tích, tổng hợp và trả lời với tốc độ mà con người khó cạnh tranh.
+Nhưng câu hỏi quan trọng không còn là công nghệ có thể làm được gì.
+Câu hỏi là: con người sẽ trở thành ai khi sở hữu những khả năng ấy?
+Một công cụ thông minh không mặc nhiên làm người sử dụng thông minh hơn. Thông tin nhiều
+hơn không đồng nghĩa hiểu biết sâu hơn. Kết nối liên tục cũng không bảo đảm con người bớt cô đơn.
+Công nghệ có thể giúp chúng ta viết một bài phát biểu, nhưng không thể sống thay trải nghiệm tạo
+nên điều ta thật sự muốn nói. Nó có thể đề xuất hàng trăm câu hỏi, nhưng quyền lựa chọn câu hỏi nào
+đáng đặt ra vẫn thuộc về con người.
+Vì vậy, thách thức của thời đại công nghệ không phải cuộc chiến giữa người và máy. Đó là cuộc
+thử thách của con người với chính mình: giữa tiện lợi và lệ thuộc, giữa tốc độ và chiều sâu, giữa khả
+năng tạo ra nội dung và trách nhiệm với điều mình tạo ra.
+Máy móc càng thông minh, con người càng cần biết mình tin điều gì, chịu trách nhiệm về điều gì
+và giữ lại điều gì thuộc về phẩm giá con người.`,
+        },
+        {
+          no: "ĐỀ 08",
+          title: "CHIA TAY TÌNH ĐẦU",
+          kind: 8,
+          quote: "Sau này mình còn gặp nhau không?",
+          cat: "TRUYỆN NGẮN • ĐỐI THOẠI",
+          text: `“Sau này mình còn gặp nhau không?”
+Cô hỏi khi hai người đứng dưới mái hiên cũ. Mưa đã nhỏ hơn nhưng chẳng ai bước đi.
+“Chắc có.”
+“Và nếu gặp, anh sẽ nói gì?”
+Anh cười. Một nụ cười vụng về của tuổi hai mươi, khi người ta đủ trẻ để yêu hết lòng nhưng chưa
+đủ từng trải để biết giữ một người.
+“Anh sẽ hỏi em có hạnh phúc không.”
+“Chỉ vậy?”
+“Chỉ vậy.”
+Nhiều năm sau họ thật sự gặp lại. Không phải dưới mái hiên ấy, mà giữa một thành phố đông người.
+Cô đã khác. Anh cũng vậy. Những năm tháng không xin phép ai trước khi để lại vài nếp nhăn nơi khóe mắt.
+Họ ngồi uống cà phê. Nhắc chuyện cũ. Cười nhiều hơn tưởng tượng.
+Đến lúc chia tay, cô chợt hỏi: “Anh không hỏi câu ngày xưa à?”
+Anh nhìn cô thật lâu. “Thấy em bình yên rồi. Không cần hỏi nữa.”
+Có những tình yêu không đi cùng ta đến cuối đời nhưng vẫn đi cùng ta qua một phần rất sâu của ký ức.
+Tình đầu đôi khi không phải người ta phải tìm cách lấy lại. Nó là nơi ta từng học cách rung động,
+vụng về, tổn thương và trưởng thành.
+Rời quán, họ đi về hai hướng. Không ai ngoái lại. Không phải vì đã quên. Mà có lẽ vì cuối cùng, cả
+hai đều hiểu: có những người được cuộc đời cho gặp để thương thật lòng, chứ không nhất thiết để sở hữu đến cuối cùng.`,
+        },
+        {
+          no: "ĐỀ 10",
+          title: "THIÊN TAI",
+          kind: 9,
+          quote: "Cho bà con tôi nước sạch trước. Nhà tôi còn chịu được.",
+          cat: "CHÍNH LUẬN • PHÓNG SỰ",
+          text: `Sau cơn bão, người đàn ông đứng trước nơi từng là căn nhà của mình.
+Mái đã mất. Tường đổ. Bùn phủ lên chiếc bàn học của đứa con. Một phóng viên hỏi ông cần gì
+nhất lúc này.
+Ông im lặng vài giây rồi nói: “Cho bà con tôi nước sạch trước. Nhà tôi còn chịu được.”
+Giữa thiên tai, đôi khi một câu nói ngắn cho thấy sức nặng của con người.
+Bão, lũ, sạt lở hay hạn hán không lựa chọn người giàu hay nghèo trước khi đi qua. Nhưng mức độ
+tổn thương của mỗi cộng đồng lại phụ thuộc rất nhiều vào những gì con người đã chuẩn bị trước đó:
+hệ thống cảnh báo, quy hoạch, cơ sở hạ tầng, năng lực cứu hộ và cả ý thức bảo vệ môi trường.
+Vì vậy, nói về thiên tai không thể chỉ nói bằng lòng thương sau thảm họa.
+Những chuyến xe cứu trợ rất cần. Những bàn tay sẻ chia rất quý. Nhưng trách nhiệm với cộng đồng còn
+phải bắt đầu sớm hơn: từ phòng ngừa, khoa học, quản trị, giáo dục và những quyết định phát triển không
+đánh đổi sự an toàn lâu dài lấy lợi ích trước mắt.
+Sau mỗi cơn bão, điều đáng hỏi không chỉ là chúng ta đã cứu được bao nhiêu người. Còn phải hỏi:
+chúng ta đã học được gì để lần sau ít người phải chờ được cứu hơn?
+Lòng nhân ái giúp con người đứng dậy sau thiên tai. Còn trách nhiệm giúp xã hội bớt phải trả giá trước thiên tai.`,
+        },
+        {
+          no: "ĐỀ 11",
+          title: "ĐỐI DIỆN THẤT BẠI",
+          kind: 10,
+          quote: "Thất bại là một sự kiện. Đừng biến nó thành căn cước.",
+          cat: "SUY NGẪM",
+          text: `Không phải thất bại nào cũng chứa sẵn một bài học.
+Có những lần thua chỉ khiến ta đau. Có những cánh cửa đóng lại chẳng mở ngay một cánh cửa khác.
+Có những cố gắng rất nhiều vẫn không đem về kết quả tương xứng.
+Bởi vậy, đừng vội lãng mạn hóa thất bại.
+Điều đáng nói không nằm ở việc ta đã ngã đẹp thế nào, mà ở cách ta nhìn thẳng vào nguyên nhân của cú ngã ấy.
+Nếu thiếu năng lực, hãy học. Nếu chủ quan, hãy sửa. Nếu lựa chọn sai, hãy chịu trách nhiệm. Nếu đã làm hết sức
+nhưng hoàn cảnh không cho một kết quả khác, hãy đủ tỉnh táo để chấp nhận.
+Con người mạnh không phải người luôn thắng. Đó là người không dùng thất bại để kết án giá trị của chính mình.
+Một kỳ thi trượt không chứng minh ta là người thất bại. Một dự án đổ vỡ không có quyền định nghĩa cả sự nghiệp.
+Một người rời đi cũng không chứng minh ta không đáng được yêu.
+Thất bại là một sự kiện. Đừng biến nó thành căn cước.
+Có thể sau một lần ngã, ta chưa đứng lên ngay. Cứ đau nếu cần. Cứ nghỉ nếu mệt. Nhưng khi đã nhìn đủ sâu vào điều
+vừa xảy ra, hãy mang theo phần hiểu biết và để phần cay đắng ở lại.
+Bởi trưởng thành không phải là chưa từng thua. Mà là sau mỗi lần thua, ta hiểu rõ hơn mình phải sống thế nào.`,
+        },
+        {
+          no: "ĐỀ 12",
+          title: "NGHỀ MC",
+          kind: 11,
+          quote: "Micro có một đặc tính rất công bằng.",
+          cat: "TỰ SỰ • CHÍNH LUẬN NGHỀ NGHIỆP",
+          text: `Một MC bước ra sân khấu. Ánh sáng bật lên. Nhạc nổi. Khán giả nhìn về phía người đang cầm micro.
+Trong vài giây ấy, người ta dễ nghĩ nghề MC bắt đầu bằng khả năng nói. Không hẳn.
+Trước một câu nói tốt là rất nhiều giờ đọc, tìm hiểu, biên tập, tập luyện và tự hỏi mình đã hiểu điều sắp nói hay chưa.
+Trước sự tự tin trên sân khấu là kỷ luật ở những nơi không có khán giả. Và trước khả năng khiến người khác lắng nghe
+là năng lực biết lắng nghe người khác.
+Micro có một đặc tính rất công bằng: nó khuếch đại giọng nói, nhưng đồng thời cũng khuếch đại sự hời hợt.
+Một người dẫn có thể nhớ hàng trăm câu chữ nhưng vẫn không chạm được người nghe nếu bản thân không hiểu câu chuyện.
+Ngược lại, một khoảng lặng đúng lúc đôi khi nói nhiều hơn một đoạn dẫn được viết rất đẹp.
+Nghề MC vì thế không chỉ đào tạo một người nói hay. Nó đòi hỏi người làm nghề biết đọc, biết nghĩ, biết hỏi, biết nghe,
+biết ứng xử và biết chịu trách nhiệm về lời nói của mình.
+Rồi sẽ có ngày ánh đèn sân khấu tắt. Tiếng vỗ tay cũng dừng.
+Điều còn lại không phải ta đã nói bao nhiêu câu thật hay. Mà là sau khi ta nói xong, người nghe đã nhận được điều gì.
+Bởi micro có thể trao cho một người quyền được nói. Nhưng chỉ tri thức, nhân cách và lao động nghề nghiệp mới khiến lời nói ấy đáng được lắng nghe.`,
+        },
+      ];
+
+      const selection = document.getElementById("selection");
+      const modal = document.getElementById("modal");
+      const quote = document.getElementById("quote");
+      const exam = document.getElementById("exam");
+      const toast = document.getElementById("toast");
+      let selected = null,
+        interval = null,
+        remaining = 120;
+
+      function shuffle(a) {
+        return [...a].sort(() => Math.random() - 0.5);
+      }
+      function render() {
+        selection.innerHTML = "";
+        shuffle(DATA).forEach((item, i) => {
+          const card = document.createElement("button");
+          card.className = "card";
+          card.type = "button";
+          card.setAttribute("aria-label", "Vật thể bí ẩn " + (i + 1));
+          card.innerHTML = `<span class="object o${item.kind}"></span><span class="name">MẢNH ${String(i + 1).padStart(2, "0")}</span>`;
+          card.addEventListener("click", () => choose(item, card));
+          selection.appendChild(card);
+        });
+      }
+      function choose(item, card) {
+        if (selected) return;
+        selected = item;
+        document.querySelectorAll(".card").forEach((c) => {
+          if (c !== card) {
+            c.style.opacity = ".1";
+            c.style.filter = "blur(4px)";
+          }
+        });
+        card.style.transform = "scale(1.25) translateY(-5px)";
+        card.style.zIndex = "20";
+        toast.classList.add("show");
+        setTimeout(() => openReveal(item), 800);
+      }
+      function openReveal(item) {
+        quote.innerHTML = "";
+        item.quote.split(" ").forEach((w, i) => {
+          const s = document.createElement("span");
+          s.className = "word";
+          s.textContent = w;
+          quote.appendChild(s);
+          setTimeout(() => s.classList.add("in"), i * 50);
+        });
+        modal.classList.add("show");
+      }
+      document.getElementById("openExam").onclick = () => {
+        modal.classList.remove("show");
+        setTimeout(() => openExam(selected), 450);
+      };
+      function openExam(item) {
+        document.getElementById("examNo").textContent = item.no;
+        document.getElementById("examTitle").textContent = item.title;
+        document.getElementById("examCategory").textContent = item.cat;
+        document.getElementById("examText").textContent = item.text;
+        exam.classList.add("show");
+        startTimer();
+      }
+      function startTimer() {
+        clearInterval(interval);
+        remaining = 120;
+        updateClock();
+        interval = setInterval(() => {
+          remaining--;
+          updateClock();
+          if (remaining <= 0) clearInterval(interval);
+        }, 1000);
+      }
+      function updateClock() {
+        const m = String(Math.max(0, Math.floor(remaining / 60))).padStart(2, "0");
+        const s = String(Math.max(0, remaining % 60)).padStart(2, "0");
+        const el = document.getElementById("clock");
+        el.textContent = `${m}:${s}`;
+        el.classList.toggle("danger", remaining <= 15);
+      }
+      document.getElementById("back").onclick = () => {
+        clearInterval(interval);
+        exam.classList.remove("show");
+        modal.classList.remove("show");
+        selected = null;
+        render();
+      };
+      render();
+    </script>
+  </body>
+</html>
