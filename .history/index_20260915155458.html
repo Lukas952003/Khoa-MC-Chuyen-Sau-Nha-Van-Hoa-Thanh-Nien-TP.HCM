@@ -364,186 +364,6 @@
         color: #fff;
       }
 
-      /* ===== QUẢN LÝ ĐỀ ĐÃ ẨN ===== */
-      .hidden-control {
-        position: absolute;
-        right: 5.5vw;
-        bottom: 4.2vh;
-        z-index: 12;
-        padding: 10px 16px;
-        border: 1px solid rgba(233, 200, 137, 0.28);
-        border-radius: 999px;
-        background: rgba(10, 14, 23, 0.72);
-        color: #bfc8d7;
-        cursor: pointer;
-        font:
-          800 8px Montserrat,
-          sans-serif;
-        letter-spacing: 0.14em;
-        backdrop-filter: blur(12px);
-        transition: 0.25s;
-      }
-
-      .hidden-control:hover {
-        background: #fff;
-        color: #08101a;
-        transform: translateY(-2px);
-      }
-
-      .hidden-control:disabled {
-        opacity: 0.28;
-        cursor: default;
-        transform: none;
-      }
-
-      .hidden-panel {
-        position: absolute;
-        inset: 0;
-        z-index: 45;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 5vh 5vw;
-        background: rgba(3, 6, 13, 0.92);
-        backdrop-filter: blur(24px);
-        opacity: 0;
-        visibility: hidden;
-        transition: 0.35s ease;
-      }
-
-      .hidden-panel.show {
-        opacity: 1;
-        visibility: visible;
-      }
-
-      .hidden-box {
-        width: min(850px, 88vw);
-        max-height: 78vh;
-        overflow: auto;
-        padding: 30px;
-        border: 1px solid rgba(255, 255, 255, 0.12);
-        border-radius: 24px;
-        background: linear-gradient(145deg, rgba(20, 27, 43, 0.97), rgba(8, 12, 22, 0.97));
-        box-shadow: 0 30px 80px rgba(0, 0, 0, 0.55);
-      }
-
-      .hidden-heading {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 20px;
-        margin-bottom: 22px;
-      }
-
-      .hidden-heading h2 {
-        margin: 0;
-        font:
-          900 25px/1 Montserrat,
-          sans-serif;
-        letter-spacing: -0.04em;
-      }
-
-      .hidden-heading p {
-        margin: 8px 0 0;
-        color: #7f8a9e;
-        font-size: 10px;
-      }
-
-      .hidden-list {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
-      }
-
-      .hidden-item {
-        display: flex;
-        align-items: center;
-        gap: 13px;
-        min-height: 68px;
-        padding: 12px 14px;
-        border: 1px solid rgba(255, 255, 255, 0.08);
-        border-radius: 14px;
-        background: rgba(255, 255, 255, 0.025);
-      }
-
-      .hidden-mini-object {
-        width: 38px;
-        height: 38px;
-        flex: 0 0 38px;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        border-radius: 10px;
-        background: linear-gradient(135deg, rgba(255, 255, 255, 0.14), rgba(255, 255, 255, 0.025));
-      }
-
-      .hidden-info {
-        min-width: 0;
-        flex: 1;
-      }
-
-      .hidden-info b {
-        display: block;
-        font:
-          800 10px Montserrat,
-          sans-serif;
-        color: #fff;
-        letter-spacing: 0.08em;
-      }
-
-      .hidden-info span {
-        display: block;
-        margin-top: 5px;
-        color: #7f8a9e;
-        font-size: 10px;
-      }
-
-      .restore-one,
-      .close-hidden {
-        padding: 9px 12px;
-        border-radius: 999px;
-        cursor: pointer;
-        font:
-          800 8px Montserrat,
-          sans-serif;
-        letter-spacing: 0.1em;
-      }
-
-      .restore-one {
-        border: 1px solid rgba(233, 200, 137, 0.25);
-        background: rgba(233, 200, 137, 0.08);
-        color: var(--gold);
-      }
-
-      .restore-one:hover {
-        background: var(--gold);
-        color: #08101a;
-      }
-
-      .close-hidden {
-        border: 1px solid rgba(255, 255, 255, 0.1);
-        background: rgba(255, 255, 255, 0.04);
-        color: #bfc8d7;
-      }
-
-      .close-hidden:hover {
-        background: #fff;
-        color: #08101a;
-      }
-
-      @media (max-width: 700px) {
-        .hidden-control {
-          right: 4vw;
-          bottom: 8vh;
-        }
-
-        .hidden-list {
-          grid-template-columns: 1fr;
-        }
-
-        .hidden-box {
-          padding: 22px;
-        }
-      }
-
       .modal,
       .exam {
         position: absolute;
@@ -970,23 +790,6 @@
       <section class="selection" id="selection"></section>
       <div class="instruction">Hãy chọn <span>một vật thể</span> bằng trực giác</div>
 
-      <button class="hidden-control" id="hiddenControl" type="button" disabled>
-        ĐỀ ĐÃ ẨN <span id="hiddenCount">(0)</span>
-      </button>
-
-      <div class="hidden-panel" id="hiddenPanel">
-        <div class="hidden-box">
-          <div class="hidden-heading">
-            <div>
-              <h2>ĐỀ ĐÃ ẨN</h2>
-              <p>Những vật thể đã được chọn sẽ biến mất khỏi màn hình chính.</p>
-            </div>
-            <button class="close-hidden" id="closeHidden" type="button">ĐÓNG</button>
-          </div>
-          <div class="hidden-list" id="hiddenList"></div>
-        </div>
-      </div>
-
       <div class="modal" id="modal">
         <div class="reveal-box">
           <div class="reveal-kicker">MỘT CÂU CHUYỆN ĐÃ ĐƯỢC MỞ</div>
@@ -1152,28 +955,16 @@
         interval = null,
         remaining = 120;
 
-      // Các đề đã được chọn sẽ bị ẩn khỏi màn hình chính.
-      // Set lưu theo "kind" để trạng thái không bị mất khi quay lại màn hình chọn.
-      const hiddenKinds = new Set();
-
-      const hiddenControl = document.getElementById("hiddenControl");
-      const hiddenCount = document.getElementById("hiddenCount");
-      const hiddenPanel = document.getElementById("hiddenPanel");
-      const hiddenList = document.getElementById("hiddenList");
-      const closeHidden = document.getElementById("closeHidden");
-
       function render() {
         selection.innerHTML = "";
 
         // Thứ tự vật thể được cố định, không random.
-        // Các đề đã chọn sẽ bị loại khỏi màn hình chính.
+        // Số hiển thị là số vị trí trên màn hình, còn đề thực tế
+        // được giữ nguyên trong DATA.
         const fixedOrder = [6, 2, 11, 4, 9, 1, 8, 3, 10, 5, 7];
 
         fixedOrder.forEach((dataIndex, i) => {
           const item = DATA[dataIndex - 1];
-
-          if (hiddenKinds.has(item.kind)) return;
-
           const card = document.createElement("button");
           card.className = "card";
           card.type = "button";
@@ -1182,71 +973,11 @@
           card.addEventListener("click", () => choose(item, card));
           selection.appendChild(card);
         });
-
-        updateHiddenControl();
       }
-
-      function updateHiddenControl() {
-        const count = hiddenKinds.size;
-        hiddenCount.textContent = `(${count})`;
-        hiddenControl.disabled = count === 0;
-      }
-
-      function renderHiddenList() {
-        hiddenList.innerHTML = "";
-
-        const hiddenItems = DATA.filter((item) => hiddenKinds.has(item.kind));
-
-        if (!hiddenItems.length) {
-          hiddenList.innerHTML =
-            '<div style="color:#7f8a9e;font-size:11px;">Chưa có đề nào bị ẩn.</div>';
-          return;
-        }
-
-        hiddenItems.forEach((item) => {
-          const row = document.createElement("div");
-          row.className = "hidden-item";
-
-          const object = document.createElement("span");
-          object.className = `hidden-mini-object o${item.kind}`;
-
-          const info = document.createElement("div");
-          info.className = "hidden-info";
-          info.innerHTML = `<b>${item.no} • ${item.title}</b><span>Đang được ẩn khỏi màn hình chọn</span>`;
-
-          const restore = document.createElement("button");
-          restore.className = "restore-one";
-          restore.type = "button";
-          restore.textContent = "HIỆN LẠI";
-          restore.addEventListener("click", () => {
-            hiddenKinds.delete(item.kind);
-            renderHiddenList();
-            render();
-            if (!hiddenKinds.size) hiddenPanel.classList.remove("show");
-          });
-
-          row.append(object, info, restore);
-          hiddenList.appendChild(row);
-        });
-      }
-
-      hiddenControl.addEventListener("click", () => {
-        renderHiddenList();
-        hiddenPanel.classList.add("show");
-      });
-
-      closeHidden.addEventListener("click", () => {
-        hiddenPanel.classList.remove("show");
-      });
 
       function choose(item, card) {
         if (selected) return;
-
         selected = item;
-
-        // Ngay khi mở lựa chọn, vật thể + số thứ tự được đánh dấu ẩn.
-        hiddenKinds.add(item.kind);
-
         document.querySelectorAll(".card").forEach((c) => {
           if (c !== card) {
             c.style.opacity = ".08";
@@ -1254,21 +985,10 @@
             c.style.pointerEvents = "none";
           }
         });
-
         card.style.transform = "translateZ(110px) scale(1.18)";
         card.style.zIndex = "30";
-
         toast.classList.add("show");
-
-        // Sau hiệu ứng mở đề, card đã chọn sẽ biến mất hoàn toàn.
-        setTimeout(() => {
-          card.style.opacity = "0";
-          card.style.transform = "translateZ(110px) scale(0.5)";
-          card.style.pointerEvents = "none";
-          updateHiddenControl();
-          openReveal(item);
-        }, 850);
-
+        setTimeout(() => openReveal(item), 850);
         setTimeout(() => toast.classList.remove("show"), 1100);
       }
 
